@@ -12,20 +12,20 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
 
-    data = ModalRoute.of(context).settings.arguments;
+    data = data.isNotEmpty ? data : ModalRoute.of(context).settings.arguments;
     print(data);
 
     //set background
-    String bgImage = data['isDaytime'] ? 'day.png' : 'night.png';
-    Color bgColor = data['isDaytime'] ? Colors.blue : Colors.indigo[700];
+    //String bgImage = data['isDaytime'] ? 'day.png' : 'night.png';
+    //Color bgColor = data['isDaytime'] ? Colors.blue : Colors.indigo[700];
 
     return Scaffold(
-      backgroundColor: bgColor,
+      backgroundColor: Colors.indigo[700],
       body: SafeArea(
           child: Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/$bgImage'),
+                image: AssetImage('assets/night.png'),
                 fit: BoxFit.cover,
               ),
             ),
@@ -34,8 +34,16 @@ class _HomeState extends State<Home> {
               child: Column(
                 children: <Widget>[
                   FlatButton.icon(
-                    onPressed: (){
-                      Navigator.pushNamed(context, '/location');
+                    onPressed: () async {
+                      dynamic result = await Navigator.pushNamed(context, '/location');
+                      setState(() {
+                        data = {
+                          'time': result['time'],
+                          'location': result['location'],
+                          'isDaytime': result['isDaytime'],
+                          'flag': result['flag']
+                        };
+                      });
                     },
                     icon: Icon(
                         Icons.edit_location,
